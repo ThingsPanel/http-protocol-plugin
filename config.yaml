@@ -1,0 +1,19 @@
+server:
+  addr: "127.0.0.1:9988"
+
+mqtt:
+  broker: 127.0.0.1:1883 #mqtt服务端地址
+  username: root
+  password: root
+  attributes_topic: device/attributes #发送主题
+  event_topic: device/events #事件主题
+  command_topic: device/commands #命令主题
+  topic_to_subscribe: plugin/http/# #订阅主题
+  subscribe_pool: 100 #客户端订阅处理并发池
+  log-mode: ""
+  log-zap: True
+
+thingspanel:
+  address: 127.0.0.1:9999
+
+

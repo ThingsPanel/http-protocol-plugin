@@ -1,0 +1,10 @@
+{
+    "AccessToken": {
+    "label": "AccessToken",
+    "key": "AccessToken",
+    "form": [
+    { "field": "command_url","name": "接收地址","校验":"是否必输||最大长度||等" }
+    ]
+    }
+}
+    
