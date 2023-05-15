@@ -10,8 +10,6 @@ mqtt:
   command_topic: device/commands #命令主题
   topic_to_subscribe: plugin/http/# #订阅主题
   subscribe_pool: 100 #客户端订阅处理并发池
-  log-mode: ""
-  log-zap: True
 
 thingspanel:
   address: 127.0.0.1:9999

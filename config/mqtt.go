@@ -9,6 +9,4 @@ type Mqtt struct {
 	CommandTopic     string `mapstructure:"command_topic" yaml:"command_topic,omitempty"`
 	TopicToSubscribe string `mapstructure:"topic_to_subscribe" yaml:"topic_to_subscribe,omitempty"`
 	SubscribePool    int    `mapstructure:"subscribe_pool" yaml:"subscribe_pool,omitempty"`
-	LogMode          string `mapstructure:"log-mode" yaml:"log-mode,omitempty"`
-	LogZap           bool   `mapstructure:"log-zap" yaml:"log-zap,omitempty"`
 }
