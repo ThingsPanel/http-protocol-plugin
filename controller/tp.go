@@ -4,6 +4,8 @@ import (
 	"http-procotol-plugin/service"
 	"http-procotol-plugin/utils"
 	"io/ioutil"
+	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,8 +19,16 @@ var Response = utils.Response
 func (w *TpController) Config(ctx *gin.Context) {
 	if data, err := service.TpSer.Config(); err != nil || data == "" {
 		Response.Failed(ctx)
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": "404",
+			"ts":   time.Now().UnixMicro(),
+		})
 	} else {
-		Response.OK(ctx)
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": "200",
+			"data": data,
+			"ts":   time.Now().UnixMicro(),
+		})
 	}
 }
 
