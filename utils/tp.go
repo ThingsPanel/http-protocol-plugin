@@ -14,7 +14,10 @@ type Device struct {
 	DeviceConfig DeviceConfig
 }
 type DeviceConfig struct {
-	CommandUrl string `json:"command_url"` //设备接收消息url
+	CommandUrl  string `json:"WebhookAddr"` //设备接收消息url
+	OffineTime  string `json:"OffineTime"`  //设备离线时间阈值
+	DeviceId    string `json:"Id"`
+	AccessToken string `json:"AccessToken"`
 }
 
 type Resdata struct {

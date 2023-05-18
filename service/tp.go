@@ -22,17 +22,22 @@ func (u *TpService) Config() (interface{}, error) {
 }
 
 func (u *TpService) UpdateDevice(d utils.Device) error {
-	global.DevicesMap.Store(d.AccessToken, d)
+	global.DevicesMap.Store(d.DeviceConfig.AccessToken, d)
 	return nil
 }
 
 func (u *TpService) AddDevice(d utils.Device) (err error) {
-	global.DevicesMap.Store(d.AccessToken, d)
+	global.DevicesMap.Store(d.DeviceConfig.AccessToken, d)
 	return nil
 }
 
 func (u *TpService) DeleteDevice(d utils.Device) error {
-	global.DevicesMap.Delete(d.AccessToken)
+	global.DevicesMap.Range(func(key, value any) bool {
+		if value.(utils.Device).DeviceId == d.DeviceId {
+			global.DevicesMap.Delete(key)
+		}
+		return true
+	})
 	return nil
 
 }
