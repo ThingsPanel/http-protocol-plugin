@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/robfig/cron"
 )
 
 //相关业务逻辑
@@ -45,18 +47,43 @@ func (u *TpService) DeleteDevice(d utils.Device) error {
 func (u *TpService) Attributes(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic)
+	status := []byte("{\"status\":\"1\"}")
+	//状态发送至tp的mqtt
+	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	d, _ := global.DevicesMap.Load(token)
+	if device, ok := d.(utils.Device); ok {
+		device.SetLastMsgTime(utils.GetNowTime())
+		global.DevicesMap.Store(token, device)
+	}
 	return err
 }
 
 func (u *TpService) Event(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.EventTopic)
+	status := []byte("{\"status\":\"1\"}")
+	//状态发送至tp的mqtt
+	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	d, _ := global.DevicesMap.Load(token)
+	if device, ok := d.(utils.Device); ok {
+		device.SetLastMsgTime(utils.GetNowTime())
+		global.DevicesMap.Store(token, device)
+	}
 	return err
 }
 
 func (u *TpService) CommandReply(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.CommandTopic)
+	status := []byte("{\"status\":\"1\"}")
+	//状态发送至tp的mqtt
+	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	//修改map里设备的最后一次消息时间
+	d, _ := global.DevicesMap.Load(token)
+	if device, ok := d.(utils.Device); ok {
+		device.SetLastMsgTime(utils.GetNowTime())
+		global.DevicesMap.Store(token, device)
+	}
 	return err
 }
 
@@ -85,4 +112,26 @@ func TpDeviceAccessToken(token string) error {
 	}
 	global.DevicesMap.Store(res.Data.AccessToken, res.Data)
 	return nil
+}
+
+//扫描所有设备状态，将状态发送至tp的mqtt
+func OnOfflineCron() {
+	crontab := cron.New()
+	spec := "0/1 * * * *" //每秒执行一次
+	task := func() {
+		global.DevicesMap.Range(func(key, value any) bool {
+			device := value.(utils.Device)
+			if utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
+				status := []byte("{\"status\":\"0\"}")
+				//状态发送至tp的mqtt
+				err := MqttSend(device.DeviceConfig.AccessToken, status, global.Conf.Mqtt.StatusTopic)
+				if err != nil {
+					log.Println("mqtt发送状态失败...", err.Error())
+				}
+			}
+			return true
+		})
+	}
+	crontab.AddFunc(spec, task)
+	crontab.Start()
 }

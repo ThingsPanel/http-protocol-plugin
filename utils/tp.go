@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"time"
 )
 
 type Device struct {
@@ -15,15 +16,24 @@ type Device struct {
 }
 type DeviceConfig struct {
 	CommandUrl  string `json:"WebhookAddr"` //设备接收消息url
-	OffineTime  string `json:"OffineTime"`  //设备离线时间阈值
+	OffineTime  int64  `json:"OffineTime"`  //设备离线时间阈值
 	DeviceId    string `json:"Id"`
 	AccessToken string `json:"AccessToken"`
+	LastMsgTime int64  `json:"LastMsgTime"` //最后一次消息时间
+}
+
+func (d *Device) SetLastMsgTime(ts int64) {
+	d.DeviceConfig.LastMsgTime = ts
 }
 
 type Resdata struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data Device `json:"data"`
+}
+
+func GetNowTime() int64 {
+	return time.Now().Unix()
 }
 
 func ReadFormConfig() interface{} {

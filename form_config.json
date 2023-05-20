@@ -1,10 +1,28 @@
 {
-    "AccessToken": {
-    "label": "AccessToken",
-    "key": "AccessToken",
-    "form": [
-    { "field": "command_url","name": "接收地址","校验":"是否必输||最大长度||等" }
+    "config": [
+        {
+            "type": "input",
+            "dataKey": "WebhookAddr",
+            "label": "设备webhook",
+            "placeholder": "请输入设备地址",
+            "validate": {
+                "type": "string",
+                "required": false
+            }
+        },
+        {
+            "type": "input",
+            "dataKey":  "OffineTime",
+            "label": "离线时间阈值",
+            "value": 600,
+            "placeholder": "单位秒，例:设置为5;5s不上报数据即为离线",
+            "validate": {
+                "type": "number",
+                "rules": "/^\\d{1,}$/",
+                "required": false
+            }
+        }
     ]
-    }
 }
+
     

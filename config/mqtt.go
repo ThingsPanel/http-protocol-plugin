@@ -5,6 +5,7 @@ type Mqtt struct {
 	Username         string `mapstructure:"username" yaml:"username,omitempty"`
 	Password         string `mapstructure:"password" yaml:"password,omitempty"`
 	AttributesTopic  string `mapstructure:"attributes_topic" yaml:"attributes_topic,omitempty"`
+	StatusTopic      string `mapstructure:"status_topic" yaml:"status_topic,omitempty"`
 	EventTopic       string `mapstructure:"event_topic" yaml:"event_topic,omitempty"`
 	CommandTopic     string `mapstructure:"command_topic" yaml:"command_topic,omitempty"`
 	TopicToSubscribe string `mapstructure:"topic_to_subscribe" yaml:"topic_to_subscribe,omitempty"`
