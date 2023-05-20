@@ -124,6 +124,7 @@ func OnOfflineCron() {
 			if device.DeviceConfig.Status == "1" && utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
 				log.Println("设备离线:", device.DeviceConfig.AccessToken)
 				device.SetStatus("0")
+				global.DevicesMap.Store(key, device)
 				//状态发送至tp的mqtt
 				err := MqttSendOther(device.DeviceConfig.AccessToken, "0", global.Conf.Mqtt.StatusTopic)
 				if err != nil {
