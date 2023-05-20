@@ -16,6 +16,10 @@ type mqttPayload struct {
 	Token  string `json:"token"`
 	Values []byte `json:"values"`
 }
+type mqttPayloadOther struct {
+	AccessToken string      `json:"accessToken"`
+	Values      interface{} `json:"values"`
+}
 
 //发送消息
 func MqttSend(accessToken string, msg []byte, topic string) (err error) {
@@ -25,15 +29,36 @@ func MqttSend(accessToken string, msg []byte, topic string) (err error) {
 	//转换成json
 	payloadJson, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println("json转换失败", err)
+		log.Println("json转换失败", err)
 		return err
 	}
-	fmt.Println("发送消息...", string(msg), "topic:", topic)
 	t := global.Mqtt.Publish(topic, 1, false, payloadJson)
 	if t.Error() != nil {
 		log.Println("发送消息失败...", payloadJson, t.Error())
 	} else {
-		log.Println("发送...", payloadJson)
+		log.Println("发送消息...", utils.ReplaceUserInput(string(msg)), "topic:", topic)
+	}
+	return t.Error()
+}
+
+//发送状态消息
+func MqttSendOther(accessToken string, msg string, topic string) (err error) {
+	payload := &mqttPayloadOther{}
+	payload.AccessToken = accessToken
+	status := make(map[string]interface{})
+	status["status"] = msg
+	payload.Values = status
+	//转换成json
+	payloadJson, err := json.Marshal(payload)
+	if err != nil {
+		log.Println("json转换失败", err)
+		return err
+	}
+	t := global.Mqtt.Publish(topic, 1, false, payloadJson)
+	if t.Error() != nil {
+		log.Println("发送消息失败...", payload.Values, t.Error())
+	} else {
+		log.Println("发送消息...", payload.Values, "topic:", topic)
 	}
 	return t.Error()
 }
@@ -54,7 +79,7 @@ func DeviceMsgFunc(client mqtt.Client, msg mqtt.Message) {
 	}
 	//判断设备是否存在
 	if _, ok := global.DevicesMap.Load(devicemsg.Token); !ok {
-		log.Println("设备不存在,开始添加设备", devicemsg.Token)
+		log.Println("设备不存在,添加设备:", devicemsg.Token)
 		//从tp获取设备信息，将token储存在map里
 		if err := TpDeviceAccessToken(devicemsg.Token); err != nil {
 			log.Println("添加设备失败", err)

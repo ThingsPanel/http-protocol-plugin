@@ -47,12 +47,12 @@ func (u *TpService) DeleteDevice(d utils.Device) error {
 func (u *TpService) Attributes(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic)
-	status := []byte("{\"status\":\"1\"}")
 	//状态发送至tp的mqtt
-	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	err = MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
 	d, _ := global.DevicesMap.Load(token)
 	if device, ok := d.(utils.Device); ok {
 		device.SetLastMsgTime(utils.GetNowTime())
+		device.SetStatus("1")
 		global.DevicesMap.Store(token, device)
 	}
 	return err
@@ -61,12 +61,12 @@ func (u *TpService) Attributes(token string, msg []byte) error {
 func (u *TpService) Event(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.EventTopic)
-	status := []byte("{\"status\":\"1\"}")
 	//状态发送至tp的mqtt
-	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	err = MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
 	d, _ := global.DevicesMap.Load(token)
 	if device, ok := d.(utils.Device); ok {
 		device.SetLastMsgTime(utils.GetNowTime())
+		device.SetStatus("1")
 		global.DevicesMap.Store(token, device)
 	}
 	return err
@@ -75,13 +75,13 @@ func (u *TpService) Event(token string, msg []byte) error {
 func (u *TpService) CommandReply(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.CommandTopic)
-	status := []byte("{\"status\":\"1\"}")
 	//状态发送至tp的mqtt
-	err = MqttSend(token, status, global.Conf.Mqtt.StatusTopic)
+	err = MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
 	//修改map里设备的最后一次消息时间
 	d, _ := global.DevicesMap.Load(token)
 	if device, ok := d.(utils.Device); ok {
 		device.SetLastMsgTime(utils.GetNowTime())
+		device.SetStatus("1")
 		global.DevicesMap.Store(token, device)
 	}
 	return err
@@ -117,23 +117,21 @@ func TpDeviceAccessToken(token string) error {
 //扫描所有设备状态，将状态发送至tp的mqtt
 func OnOfflineCron() {
 	crontab := cron.New()
-	spec := "0/1 * * * *" //每秒执行一次
+	spec := "0/10 * * * *" //每10秒执行一次
 	task := func() {
-		log.Println("扫描设备状态...")
 		global.DevicesMap.Range(func(key, value any) bool {
 			device := value.(utils.Device)
-			if utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
+			if device.DeviceConfig.Status == "1" && utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
 				log.Println("设备离线:", device.DeviceConfig.AccessToken)
-				status := []byte("{\"status\":\"0\"}")
+				device.SetStatus("0")
 				//状态发送至tp的mqtt
-				err := MqttSend(device.DeviceConfig.AccessToken, status, global.Conf.Mqtt.StatusTopic)
+				err := MqttSendOther(device.DeviceConfig.AccessToken, "0", global.Conf.Mqtt.StatusTopic)
 				if err != nil {
 					log.Println("mqtt发送状态失败...", err.Error())
 				}
 			}
 			return true
 		})
-		log.Println("扫描设备状态完成...")
 	}
 	crontab.AddFunc(spec, task)
 	crontab.Start()
