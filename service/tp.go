@@ -119,9 +119,11 @@ func OnOfflineCron() {
 	crontab := cron.New()
 	spec := "0/1 * * * *" //每秒执行一次
 	task := func() {
+		log.Println("扫描设备状态...")
 		global.DevicesMap.Range(func(key, value any) bool {
 			device := value.(utils.Device)
 			if utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
+				log.Println("设备离线:", device.DeviceConfig.AccessToken)
 				status := []byte("{\"status\":\"0\"}")
 				//状态发送至tp的mqtt
 				err := MqttSend(device.DeviceConfig.AccessToken, status, global.Conf.Mqtt.StatusTopic)
@@ -131,6 +133,7 @@ func OnOfflineCron() {
 			}
 			return true
 		})
+		log.Println("扫描设备状态完成...")
 	}
 	crontab.AddFunc(spec, task)
 	crontab.Start()
