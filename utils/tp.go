@@ -19,7 +19,7 @@ type DeviceConfig struct {
 	CommandUrl  string `json:"WebhookAddr"` //设备接收消息url
 	OffineTime  int64  `json:"OffineTime"`  //设备离线时间阈值
 	DeviceId    string `json:"Id"`          //设备id
-	AccessToken string `json:"AccessToken"` //设备唯一标识
+	AccessToken string `json:"AccessToken"` //设备唯一标识，修改设备表单配置时，会传入该参数
 	LastMsgTime int64  `json:"LastMsgTime"` //最后一次消息时间
 	Status      string `json:"Status"`      //设备状态 0-离线 1-在线
 }

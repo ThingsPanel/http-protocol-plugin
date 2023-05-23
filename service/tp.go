@@ -113,7 +113,9 @@ func TpDeviceAccessToken(token string) error {
 	if res.Data.AccessToken == "" {
 		return errors.New("失败")
 	}
-
+	if res.Data.DeviceConfig.OffineTime == 0 {
+		res.Data.DeviceConfig.OffineTime = global.Conf.Thingspanel.OffineTime
+	}
 	global.DevicesMap.Store(res.Data.AccessToken, res.Data)
 	return nil
 }
@@ -126,11 +128,11 @@ func OnOfflineCron() {
 		global.DevicesMap.Range(func(key, value any) bool {
 			device := value.(utils.Device)
 			if device.DeviceConfig.Status == "1" && utils.GetNowTime()-device.DeviceConfig.LastMsgTime > device.DeviceConfig.OffineTime {
-				log.Println("设备离线:", device.DeviceConfig.AccessToken)
+				log.Println("设备离线:", device.AccessToken)
 				device.SetStatus("0")
 				global.DevicesMap.Store(key, device)
 				//状态发送至tp的mqtt
-				err := MqttSendOther(device.DeviceConfig.AccessToken, "0", global.Conf.Mqtt.StatusTopic)
+				err := MqttSendOther(device.AccessToken, "0", global.Conf.Mqtt.StatusTopic)
 				if err != nil {
 					log.Println("mqtt发送状态失败...", err.Error())
 				}

@@ -1,5 +1,5 @@
 server:
-  addr: "127.0.0.1:9988"
+  addr: :9988
 
 mqtt:
   broker: 127.0.0.1:1883 #mqtt服务端地址
@@ -14,5 +14,6 @@ mqtt:
 
 thingspanel:
   address: 127.0.0.1:9999
+  offine_time: 10 #设备离线时间阈值，单位秒，默认10秒，优先使用tp平台中设置的值
 
 
