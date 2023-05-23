@@ -108,8 +108,12 @@ func TpDeviceAccessToken(token string) error {
 		return err
 	}
 	if res.Code != 200 {
-		return errors.New(res.Msg)
+		return errors.New("失败")
 	}
+	if res.Data.AccessToken == "" {
+		return errors.New("失败")
+	}
+
 	global.DevicesMap.Store(res.Data.AccessToken, res.Data)
 	return nil
 }
