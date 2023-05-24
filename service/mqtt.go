@@ -85,6 +85,7 @@ func DeviceMsgFunc(client mqtt.Client, msg mqtt.Message) {
 	//发送至设备
 	if err := PostJSON(device.(utils.Device).DeviceConfig.CommandUrl, msg.Payload()); err != nil {
 		log.Println("发送失败", err)
+		return
 	}
 	log.Printf("发送成功:设备%s,webhook:%s", accesstoken, device.(utils.Device).DeviceConfig.CommandUrl)
 
