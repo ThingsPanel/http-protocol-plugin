@@ -86,17 +86,13 @@ func DeviceMsgFunc(client mqtt.Client, msg mqtt.Message) {
 	if err := PostJSON(device.(utils.Device).DeviceConfig.CommandUrl, msg.Payload()); err != nil {
 		log.Println("发送失败", err)
 	}
+	log.Printf("发送成功:设备%s,webhook:%s", accesstoken, device.(utils.Device).DeviceConfig.CommandUrl)
 
 }
 
 func PostJSON(url string, data interface{}) error {
-	// 将数据转换成JSON格式
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
 	// 发送POST请求
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data.([]byte)))
 	if err != nil {
 		return err
 	}
