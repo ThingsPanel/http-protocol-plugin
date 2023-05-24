@@ -70,26 +70,20 @@ func MqttSubscribe() mqtt.Token {
 
 func DeviceMsgFunc(client mqtt.Client, msg mqtt.Message) {
 	log.Println("订阅的新消息是：", msg.Topic(), string(msg.Payload()))
-	//将消息发送至设备
-	devicemsg := &mqttPayload{}
-	err := json.Unmarshal(msg.Payload(), &devicemsg)
-	if err != nil {
-		log.Println("json转换失败", err)
-		return
-	}
+	accesstoken := msg.Topic()[len(global.Conf.Mqtt.TopicToSubscribe)-1:]
 	//判断设备是否存在
-	if _, ok := global.DevicesMap.Load(devicemsg.Token); !ok {
-		log.Println("设备不存在,添加设备:", devicemsg.Token)
+	if _, ok := global.DevicesMap.Load(accesstoken); !ok {
+		log.Println("设备不存在,添加设备:", accesstoken)
 		//从tp获取设备信息，将token储存在map里
-		if err := TpDeviceAccessToken(devicemsg.Token); err != nil {
+		if err := TpDeviceAccessToken(accesstoken); err != nil {
 			log.Println("添加设备失败", err)
 			return
 		}
 	}
 	//获取设备信息
-	device, _ := global.DevicesMap.Load(devicemsg.Token)
+	device, _ := global.DevicesMap.Load(accesstoken)
 	//发送至设备
-	if err := PostJSON(device.(utils.Device).DeviceConfig.CommandUrl, devicemsg.Values); err != nil {
+	if err := PostJSON(device.(utils.Device).DeviceConfig.CommandUrl, msg.Payload()); err != nil {
 		log.Println("发送失败", err)
 	}
 
