@@ -8,6 +8,7 @@ import (
 	"http-procotol-plugin/utils"
 	"log"
 	"net/http"
+	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -70,7 +71,8 @@ func MqttSubscribe() mqtt.Token {
 
 func DeviceMsgFunc(client mqtt.Client, msg mqtt.Message) {
 	log.Println("订阅的新消息是：", msg.Topic(), string(msg.Payload()))
-	accesstoken := msg.Topic()[len(global.Conf.Mqtt.TopicToSubscribe)-1:]
+	topic := strings.Split(msg.Topic(), "/")
+	accesstoken := topic[len(topic)-1]
 	//判断设备是否存在
 	if _, ok := global.DevicesMap.Load(accesstoken); !ok {
 		log.Println("设备不存在,添加设备:", accesstoken)

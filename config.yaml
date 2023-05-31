@@ -7,8 +7,8 @@ mqtt:
   password: root
   attributes_topic: device/attributes #发送主题
   status_topic: device/status #状态主题
-  event_topic: device/events #事件主题
-  command_topic: device/commands #命令主题
+  event_topic: device/event #事件主题
+  command_topic: device/command/# #命令主题
   topic_to_subscribe: plugin/http/# #订阅主题
   subscribe_pool: 100 #客户端订阅处理并发池
 
