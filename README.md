@@ -1,6 +1,5 @@
 ﻿# http-procotol-plugin
 
-
 ## 功能
 
 独立程序，通过http接收数据转发至thingspanel的mqtt对应的主题。
@@ -11,7 +10,7 @@
 
 手动注册
 
-1. 点击`应用管理`->`接入协议`->`注册插件`
+1. 点击 `应用管理`->`接入协议`->`注册插件`
 2. 填入插件信息
    **名称**：创建设备时，会显示在选择协议下拉框中
    **设备类型**：必填，选直连设备
@@ -21,17 +20,17 @@
 
 ## 结构图
 
-![结构图](https://github.com/ThingsPanel/modbus-protocol-plugin/raw/main/architecture_diagram.png)
+![结构图](./images/协议插件.png)
 
-A协议插件服务或者B协议插件服务均可为http协议插件
+![时序图](images/时序图.png)
 
 ## 插件表单
 
-`./form_config.json` （表单规则详情请参考modbus-protocol-plugin案例） ThingsPanel前端通过`/api/form/config`接口获取表单配置，生成子设备的表单，用户填写的表单数据会出现在ThingsPanel提供的`/api/plugin/device/config`接口返回的数据中。
+`./form_config.json` （表单规则详情请参考modbus-protocol-plugin案例） ThingsPanel前端通过 `/api/form/config`接口获取表单配置，生成子设备的表单，用户填写的表单数据会出现在ThingsPanel提供的 `/api/plugin/device/config`接口返回的数据中。
 
 ## 交换数据相关
 
-设备发送数据至插件
+设备post发送json数据至插件
 
 api/device/AccessToken/attributes
 
@@ -41,8 +40,6 @@ api/device/AccessToken/attributes
 
 json数据格式：
 
-
-
 ```
 {
     "temp": 18.5,
@@ -51,13 +48,7 @@ json数据格式：
 }
 ```
 
-
-
-
-
 响应体：
-
-
 
 ```
 {
