@@ -10,7 +10,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 )
 
 //相关业务逻辑
@@ -111,6 +111,9 @@ func TpDeviceAccessToken(token string) error {
 		return errors.New("失败")
 	}
 	if res.Data.AccessToken == "" {
+		return errors.New("失败")
+	}
+	if res.Data.ProtocolType != "http" {
 		return errors.New("失败")
 	}
 	if res.Data.DeviceConfig.OffineTime == 0 {

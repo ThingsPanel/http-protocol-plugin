@@ -46,7 +46,7 @@ require (
 	github.com/go-basic/uuid v1.0.0
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/panjf2000/ants/v2 v2.7.3
-	github.com/robfig/cron v1.2.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.15.0
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
