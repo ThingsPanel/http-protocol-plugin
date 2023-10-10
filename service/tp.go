@@ -113,9 +113,9 @@ func TpDeviceAccessToken(token string) error {
 	if res.Data.AccessToken == "" {
 		return errors.New("失败")
 	}
-	if res.Data.ProtocolType != "http-mqtt" {
-		return errors.New("失败")
-	}
+	//if res.Data.ProtocolType != "http-mqtt" {
+	//	return errors.New("失败")
+	//}
 	if res.Data.DeviceConfig.OffineTime == 0 {
 		res.Data.DeviceConfig.OffineTime = global.Conf.Thingspanel.OffineTime
 	}
