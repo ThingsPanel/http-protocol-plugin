@@ -2,7 +2,7 @@
 
 ## 功能和部署
 
-- 然后在服务器上使用git命令获取仓库源码
+- 在服务器上使用git命令获取仓库源码
 
   ```bash
   git clone https://github.com/ThingsPanel/http-protocol-plugin.git
