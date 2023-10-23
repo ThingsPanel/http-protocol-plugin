@@ -60,7 +60,7 @@ func (u *TpService) Attributes(token string, msg []byte) error {
 		deviceId = device.DeviceId
 	}
 
-	if global.Conf.Mqtt.StatusTopic == "timescaledb" {
+	if global.Conf.Mqtt.DbType == "timescaledb" {
 		//状态发送至tp的mqtt
 		err = MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic)
 	} else {
