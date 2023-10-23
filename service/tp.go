@@ -45,22 +45,38 @@ func (u *TpService) DeleteDevice(d utils.Device) error {
 }
 
 func (u *TpService) Attributes(token string, msg []byte) error {
-	//数据发送至tp的mqtt
-	err := MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic)
 	//状态发送至tp的mqtt
-	err = MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
+	err := MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
+	if err != nil {
+		log.Println("mqtt发送状态失败...", err.Error())
+	}
+	//数据发送至tp的mqtt
+	var deviceId string
 	d, _ := global.DevicesMap.Load(token)
 	if device, ok := d.(utils.Device); ok {
 		device.SetLastMsgTime(utils.GetNowTime())
 		device.SetStatus("1")
 		global.DevicesMap.Store(token, device)
+		deviceId = device.DeviceId
 	}
+
+	if global.Conf.Mqtt.StatusTopic == "timescaledb" {
+		//状态发送至tp的mqtt
+		err = MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic)
+	} else {
+		//状态发送至tp的mqtt
+		err = MqttSend(token, msg, global.Conf.Mqtt.AttributesTopic+"/"+deviceId)
+	}
+
 	return err
 }
 
 func (u *TpService) Event(token string, msg []byte) error {
 	//数据发送至tp的mqtt
 	err := MqttSend(token, msg, global.Conf.Mqtt.EventTopic)
+	if err != nil {
+		log.Println("mqtt发送事件失败...", err.Error())
+	}
 	//状态发送至tp的mqtt
 	err = MqttSendOther(token, "1", global.Conf.Mqtt.StatusTopic)
 	d, _ := global.DevicesMap.Load(token)

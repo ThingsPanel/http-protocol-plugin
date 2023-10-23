@@ -10,4 +10,5 @@ type Mqtt struct {
 	CommandTopic     string `mapstructure:"command_topic" yaml:"command_topic,omitempty"`
 	TopicToSubscribe string `mapstructure:"topic_to_subscribe" yaml:"topic_to_subscribe,omitempty"`
 	SubscribePool    int    `mapstructure:"subscribe_pool" yaml:"subscribe_pool,omitempty"`
+	DbType           string `mapstructure:"db_type" yaml:"db_type,omitempty"`
 }
