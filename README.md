@@ -8,7 +8,7 @@
   git clone https://github.com/ThingsPanel/http-protocol-plugin.git
   ```
 
-- http协议插件需要单独部署，如果与Mqtt Broker和ThingsPanel后端在一个服务器（同一个网络），则不需要修改配置文件；否则修改./config.ymal的mqtt服务端地址、ThingsPanel的Address。
+- http协议插件需要单独部署，如果与Mqtt Broker和ThingsPanel后端在一个服务器（同一个网络），则不需要修改配置文件；否则修改./config.yaml的mqtt服务端地址、ThingsPanel的Address。
 - 如果使用了TimescaleDB以外的时序数据库，需要修改配置文件中的db_type为other(默认是timescaledb)。
 - 安装go环境（1.18版本）后，执行命令启动HTTP协议插件服务(可选择pm2进行托管)
 
